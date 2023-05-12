@@ -12,7 +12,12 @@ export class UsersService {
   }
 
   async getById(id: number) {
-    return this.usersRepository.getById(id);
+    //Получение баланса кошелька с бека кошелька
+    const walletbalance = 1000;
+
+    const currentUser = await this.usersRepository.getById(id);
+
+    return { ...currentUser, walletbalance };
   }
 
   async getByEmail(email: string) {

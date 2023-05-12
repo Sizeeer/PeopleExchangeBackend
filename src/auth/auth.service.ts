@@ -10,7 +10,7 @@ import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserAlreadyExistsException } from 'src/users/exceptions/userAlreadyExists.exception';
-import { TokenPayload } from 'src/auth/tokenPayload.interface';
+import { TokenPayload } from 'src/auth/interfaces/tokenPayload.interface';
 
 @Injectable()
 export class AuthService {

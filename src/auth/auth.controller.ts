@@ -7,12 +7,11 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { RegisterDto } from 'src/auth/dto/register.dto';
-import { LocalAuthenticationGuard } from 'src/auth/localAuthentication.guard';
-import RequestWithUser from 'src/auth/requestWithUser.interface';
+import { LocalAuthenticationGuard } from 'src/auth/guards/localAuthentication.guard';
+import RequestWithUser from 'src/auth/interfaces/requestWithUser.interface';
 
 @Controller('auth')
 export class AuthController {

@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { RoleGuard } from 'src/auth/role.guard';
+import { RoleGuard } from 'src/auth/guards/role.guard';
 import { ROLES } from 'src/constants/roles';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
 
