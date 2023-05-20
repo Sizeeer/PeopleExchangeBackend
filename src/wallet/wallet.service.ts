@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Contract, EtherscanProvider, formatEther, parseEther } from 'ethers';
+import { Inject, Injectable } from '@nestjs/common';
+import { EtherscanProvider, formatEther } from 'ethers';
 import {
   EthersContract,
   EthersSigner,
@@ -8,6 +8,9 @@ import {
   InjectSignerProvider,
 } from 'nestjs-ethers';
 import * as ABI from './contracts/wallet.json';
+import { InvestInBodyDto } from 'src/wallet/dto/investInBody.dto';
+import { ReturnInvestementsBodyDto } from 'src/wallet/dto/returnInvestementsBody.dto';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class WalletService {
@@ -20,6 +23,8 @@ export class WalletService {
     private readonly ethersProvider: EtherscanProvider,
     @InjectSignerProvider()
     private readonly ethersSigner: EthersSigner,
+    @Inject(UsersRepository)
+    private readonly usersRepository: UsersRepository,
   ) {
     this.contract = this.ethersContract.create(
       '0x75a89C3c46dCF70a1B3138487d870f22DEDaD9f2',
@@ -31,9 +36,17 @@ export class WalletService {
     this.ethersSigner.createRandomWallet();
   }
 
-  async getBalance(address: string) {
-    const balanceOfUser = await this.contract.balanceOf(address);
+  async getBalance(userId: number) {
+    const currentUser = await this.usersRepository.getById(userId);
+
+    const balanceOfUser = await this.contract.balanceOf(
+      currentUser.walletaddress,
+    );
 
     return formatEther(balanceOfUser.toString());
   }
+
+  async returnInvestements(returnInvestementsDto: ReturnInvestementsBodyDto) {}
+
+  async investIn(investInBody: InvestInBodyDto) {}
 }

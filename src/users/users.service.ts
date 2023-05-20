@@ -11,6 +11,10 @@ export class UsersService {
     return this.usersRepository.getAll();
   }
 
+  async getAllTalentPersons() {
+    return this.usersRepository.getAllTalentPersons();
+  }
+
   async getById(id: number) {
     //Получение баланса кошелька с бека кошелька
     const walletbalance = 1000;
@@ -34,5 +38,13 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     return this.usersRepository.update(id, updateUserDto);
+  }
+
+  async ban(id: number) {
+    return this.usersRepository.ban(id);
+  }
+
+  async deleteUserAccount(id: number) {
+    return this.usersRepository.deleteUserAccount(id);
   }
 }

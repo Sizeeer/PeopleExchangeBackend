@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import { ROLES } from 'src/constants/roles';
 import { DatabaseService } from 'src/database/database.service';
 import { PostgresErrorCode } from 'src/database/postgresErrorCode.enum';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
@@ -14,8 +15,19 @@ export class UsersRepository {
 
   async getAll() {
     const databaseResponse = await this.databaseService.runQuery(`
-      SELECT * FROM Users
+      SELECT * FROM Users WHERE is_banned = false
     `);
+
+    return plainToInstance(UserModel, databaseResponse.rows);
+  }
+
+  async getAllTalentPersons() {
+    const databaseResponse = await this.databaseService.runQuery(
+      `
+      SELECT * FROM Users WHERE is_banned = false and roleid = $1
+    `,
+      [ROLES.TalentPerson],
+    );
 
     return plainToInstance(UserModel, databaseResponse.rows);
   }
@@ -92,6 +104,22 @@ export class UsersRepository {
       ) {
         throw new UserAlreadyExistsException(updateUserDto.email);
       }
+      throw error;
+    }
+  }
+
+  async ban(id: number) {
+    try {
+      await this.databaseService.runQuery(`SELECT ban_user($1)`, [id]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteUserAccount(id: number) {
+    try {
+      await this.databaseService.runQuery(`SELECT delete_user($1)`, [id]);
+    } catch (error) {
       throw error;
     }
   }

@@ -9,7 +9,8 @@ export async function up(knex: Knex): Promise<void> {
         email VARCHAR(255) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         roleId INTEGER NOT NULL REFERENCES Roles(id),
-        walletAddress VARCHAR(255)
+        walletAddress VARCHAR(255),
+        is_banned BOOLEAN NOT NULL DEFAULT false
       );
   `);
 }
