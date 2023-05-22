@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { ROLES } from 'src/constants/roles';
 import { DatabaseService } from 'src/database/database.service';
 import { PostgresErrorCode } from 'src/database/postgresErrorCode.enum';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
 import { UserAlreadyExistsException } from 'src/users/exceptions/userAlreadyExists.exception';
+import { GetByEmailOptions } from 'src/users/types';
 import { UserModel } from 'src/users/user.model';
 import { isDatabaseError } from 'src/utils/databaseError';
 
@@ -47,7 +48,7 @@ export class UsersRepository {
     return new UserModel(entity);
   }
 
-  async getByEmail(email: string) {
+  async getByEmail(email: string, { plain = true }: GetByEmailOptions) {
     const databaseResponse = await this.databaseService.runQuery(
       `SELECT * from getbyemail($1)`,
       [email],
@@ -58,7 +59,11 @@ export class UsersRepository {
       throw new NotFoundException();
     }
 
-    return new UserModel(entity);
+    if (plain) {
+      return plainToClass(UserModel, entity);
+    } else {
+      return entity;
+    }
   }
 
   async create(userData: CreateUserDto) {

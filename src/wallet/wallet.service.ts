@@ -11,6 +11,7 @@ import * as ABI from './contracts/wallet.json';
 import { InvestInBodyDto } from 'src/wallet/dto/investInBody.dto';
 import { ReturnInvestementsBodyDto } from 'src/wallet/dto/returnInvestementsBody.dto';
 import { UsersRepository } from 'src/users/users.repository';
+import { TransactionsRepository } from 'src/transactions/transactions.repository';
 
 @Injectable()
 export class WalletService {
@@ -25,6 +26,8 @@ export class WalletService {
     private readonly ethersSigner: EthersSigner,
     @Inject(UsersRepository)
     private readonly usersRepository: UsersRepository,
+    @Inject(TransactionsRepository)
+    private readonly transactionsRepository: TransactionsRepository,
   ) {
     this.contract = this.ethersContract.create(
       '0x75a89C3c46dCF70a1B3138487d870f22DEDaD9f2',
@@ -46,7 +49,17 @@ export class WalletService {
     return formatEther(balanceOfUser.toString());
   }
 
-  async returnInvestements(returnInvestementsDto: ReturnInvestementsBodyDto) {}
+  async returnInvestements(
+    userId: number,
+    returnInvestementsDto: ReturnInvestementsBodyDto,
+  ) {
+    const { walletaddress } = await this.usersRepository.getById(userId);
+    console.log('walletaddress', walletaddress);
+    const inverstorsOfTalentPerson =
+      await this.transactionsRepository.getInvestorsByTalentPersonId(userId);
+    console.log('inverstorsOfTalentPerson', inverstorsOfTalentPerson);
+    const { amount } = returnInvestementsDto;
+  }
 
   async investIn(investInBody: InvestInBodyDto) {}
 }

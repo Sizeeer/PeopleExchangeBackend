@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { ROLES } from 'src/constants/roles';
+import { User } from 'src/users/decorators/user.decorator';
 import { InvestInBodyDto } from 'src/wallet/dto/investInBody.dto';
 import { ReturnInvestementsBodyDto } from 'src/wallet/dto/returnInvestementsBody.dto';
 import { WalletService } from 'src/wallet/wallet.service';
@@ -32,7 +33,13 @@ export class WalletController {
 
   @UseGuards(RoleGuard(ROLES.TalentPerson))
   @Post('return')
-  returnInvestements(@Body() returnInvestementsDto: ReturnInvestementsBodyDto) {
-    return this.walletService.returnInvestements(returnInvestementsDto);
+  returnInvestements(
+    @Body() returnInvestementsDto: ReturnInvestementsBodyDto,
+    @User() user,
+  ) {
+    return this.walletService.returnInvestements(
+      user.id,
+      returnInvestementsDto,
+    );
   }
 }

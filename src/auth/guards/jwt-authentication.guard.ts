@@ -8,16 +8,16 @@ export default class JwtAuthenticationGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(context: ExecutionContext) {
-    const isPublic = this.reflector.get<boolean>(
-      'isPublic',
-      context.getHandler(),
-    );
+  // canActivate(context: ExecutionContext) {
+  //   const isPublic = this.reflector.get<boolean>(
+  //     'isPublic',
+  //     context.getHandler(),
+  //   );
 
-    if (isPublic) {
-      return true;
-    }
+  //   if (isPublic) {
+  //     return true;
+  //   }
 
-    return super.canActivate(context);
-  }
+  //   return super.canActivate(context);
+  // }
 }

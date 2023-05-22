@@ -8,7 +8,8 @@ import {
   GOERLI_NETWORK,
 } from 'nestjs-ethers';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EtherscanProvider } from 'ethers';
+import { UsersRepository } from 'src/users/users.repository';
+import { TransactionsRepository } from 'src/transactions/transactions.repository';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { EtherscanProvider } from 'ethers';
     }),
   ],
   controllers: [WalletController],
-  providers: [WalletService],
+  providers: [WalletService, UsersRepository, TransactionsRepository],
   exports: [WalletService],
 })
 export class WalletModule {}

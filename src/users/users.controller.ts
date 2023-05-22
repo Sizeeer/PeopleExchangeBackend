@@ -23,18 +23,21 @@ import { UsersService } from 'src/users/users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @ApiResponse({ status: HTTP_STATUS_CODES.OK })
-  @HttpCode(HTTP_STATUS_CODES.OK)
-  @Get()
-  @UseGuards(RoleGuard(ROLES.Admin))
-  getAll() {
-    return this.usersService.getAll();
-  }
-
   @Get('talent')
-  @UseGuards(RoleGuard(ROLES.Investor))
+  @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getAllTalentPersons() {
     return this.usersService.getAllTalentPersons();
+  }
+
+  @ApiResponse({
+    status: HTTP_STATUS_CODES.OK,
+    description: 'Возвращает пользователя по id админу',
+  })
+  @HttpCode(HTTP_STATUS_CODES.OK)
+  @Get(':id')
+  @UseGuards(RoleGuard(ROLES.Admin))
+  getAll(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getById(id);
   }
 
   @Put(':id')

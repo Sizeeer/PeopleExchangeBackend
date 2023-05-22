@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
+import { GetByEmailOptions } from 'src/users/types';
 import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
@@ -24,8 +25,8 @@ export class UsersService {
     return { ...currentUser, walletbalance };
   }
 
-  async getByEmail(email: string) {
-    return this.usersRepository.getByEmail(email);
+  async getByEmail(email: string, options?: GetByEmailOptions) {
+    return this.usersRepository.getByEmail(email, options);
   }
 
   async create(user: CreateUserDto) {

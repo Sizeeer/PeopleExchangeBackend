@@ -22,6 +22,7 @@ export class AuthService {
 
   public async register(registrationData: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+
     try {
       return await this.usersService.create({
         ...registrationData,
@@ -31,7 +32,7 @@ export class AuthService {
       if (error instanceof UserAlreadyExistsException) {
         throw new BadRequestException('User with that email already exists');
       }
-      console.log('error', error);
+
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -39,7 +40,7 @@ export class AuthService {
     }
   }
 
-  public getCookieWithJwtToken(userId: number) {
+  public getJwtToken(userId: number) {
     const payload: TokenPayload = { userId };
 
     const maxAge = this.configService.get('JWT_EXPIRATION_TIME');
@@ -48,7 +49,7 @@ export class AuthService {
       expiresIn: maxAge,
     });
 
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${maxAge}`;
+    return token;
   }
 
   public getCookieForLogOut() {
@@ -57,8 +58,12 @@ export class AuthService {
 
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {
     try {
-      const user = await this.usersService.getByEmail(email);
+      const user = await this.usersService.getByEmail(email, { plain: false });
+
       await this.verifyPassword(plainTextPassword, user.password);
+
+      delete user.password;
+
       return user;
     } catch (error) {
       throw new HttpException(

@@ -25,3 +25,7 @@ export class UserModel {
     Object.assign(this, data);
   }
 }
+
+export class InvestorDTOModel extends UserModel {
+  invested_amout: number;
+}

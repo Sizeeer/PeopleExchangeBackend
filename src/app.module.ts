@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { WalletModule } from './wallet/wallet.module';
+import { TransactionsModule } from './transactions/transactions.module';
 import DatabaseModule from 'src/database/database.module';
 
 @Module({
@@ -20,6 +21,7 @@ import DatabaseModule from 'src/database/database.module';
       }),
     }),
     AuthModule,
+    TransactionsModule,
     WalletModule,
   ],
   controllers: [],
