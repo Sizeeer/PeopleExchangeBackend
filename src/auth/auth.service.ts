@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { UserAlreadyExistsException } from 'src/users/exceptions/userAlreadyExists.exception';
 import { TokenPayload } from 'src/auth/interfaces/tokenPayload.interface';
 import { WalletService } from 'src/wallet/wallet.service';
+import { HTTP_STATUS_CODES } from 'src/constants/httpStatusCodes';
 
 @Injectable()
 export class AuthService {
@@ -27,11 +28,7 @@ export class AuthService {
       const newWallet = await this.walletService.create();
 
       const hashedPassword = await bcrypt.hash(registrationData.password, 10);
-      console.log({
-        ...registrationData,
-        walletaddress: newWallet.address,
-        password: hashedPassword,
-      });
+
       await this.usersService.create({
         ...registrationData,
         walletaddress: newWallet.address,
@@ -46,13 +43,8 @@ export class AuthService {
 
       return jwt;
     } catch (error: unknown) {
-      console.log('error', error);
-      if (error instanceof UserAlreadyExistsException) {
-        throw new BadRequestException('User with that email already exists');
-      }
-
       throw new HttpException(
-        'Something went wrong',
+        'Регистрация завершилась неудачей:(',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

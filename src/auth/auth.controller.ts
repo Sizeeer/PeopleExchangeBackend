@@ -32,6 +32,6 @@ export class AuthController {
 
     const jwt = this.authService.getJwtToken(user.id);
 
-    return { jwt };
+    return { jwt, user };
   }
 }
