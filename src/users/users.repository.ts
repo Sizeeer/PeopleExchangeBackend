@@ -14,6 +14,8 @@ import { isDatabaseError } from 'src/utils/databaseError';
 export class UsersRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  private DEFAULT_PAGE_SIZE = 10;
+
   async getAll() {
     const databaseResponse = await this.databaseService.runQuery(`
       SELECT * FROM Users WHERE is_banned = false
@@ -22,13 +24,19 @@ export class UsersRepository {
     return plainToInstance(UserModel, databaseResponse.rows);
   }
 
-  async getAllTalentPersons() {
+  async getTalentPersons(page: number) {
     const databaseResponse = await this.databaseService.runQuery(
       `
-      SELECT * FROM Users WHERE is_banned = false and roleid = $1
+      SELECT * FROM Users WHERE is_banned = false and roleid = $1 LIMIT $2 OFFSET $3
     `,
-      [ROLES.TalentPerson],
+      [
+        ROLES.TalentPerson,
+        this.DEFAULT_PAGE_SIZE,
+        (page - 1) * this.DEFAULT_PAGE_SIZE,
+      ],
     );
+
+    console.log('databaseResponse.rows', databaseResponse.rows);
 
     return plainToInstance(UserModel, databaseResponse.rows);
   }

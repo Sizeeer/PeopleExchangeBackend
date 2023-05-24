@@ -22,9 +22,9 @@ import { UsersModule } from 'src/users/users.module';
       }),
     }),
     AuthModule,
-    TransactionsModule,
     WalletModule,
     UsersModule,
+    TransactionsModule,
   ],
   controllers: [],
   providers: [

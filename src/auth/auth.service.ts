@@ -1,18 +1,11 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
-import { UserAlreadyExistsException } from 'src/users/exceptions/userAlreadyExists.exception';
 import { TokenPayload } from 'src/auth/interfaces/tokenPayload.interface';
 import { WalletService } from 'src/wallet/wallet.service';
-import { HTTP_STATUS_CODES } from 'src/constants/httpStatusCodes';
 
 @Injectable()
 export class AuthService {
@@ -60,10 +53,6 @@ export class AuthService {
     });
 
     return token;
-  }
-
-  public getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {

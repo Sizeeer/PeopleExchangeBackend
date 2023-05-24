@@ -12,8 +12,8 @@ export class UsersService {
     return this.usersRepository.getAll();
   }
 
-  async getAllTalentPersons() {
-    return this.usersRepository.getAllTalentPersons();
+  async getTalentPersons(page: number) {
+    return this.usersRepository.getTalentPersons(page);
   }
 
   async getById(id: number) {

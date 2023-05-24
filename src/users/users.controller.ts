@@ -4,10 +4,12 @@ import {
   Delete,
   Get,
   HttpCode,
+  Optional,
   Param,
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -15,7 +17,6 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 import { HTTP_STATUS_CODES } from 'src/constants/httpStatusCodes';
 import { ROLES } from 'src/constants/roles';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
-
 import { UsersService } from 'src/users/users.service';
 
 @ApiTags('users')
@@ -25,8 +26,8 @@ export class UsersController {
 
   @Get('talent')
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
-  getAllTalentPersons() {
-    return this.usersService.getAllTalentPersons();
+  getTalentPersons(@Query() queryParams: any) {
+    return this.usersService.getTalentPersons(Number(queryParams?.page) || 1);
   }
 
   @ApiResponse({
