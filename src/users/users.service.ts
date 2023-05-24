@@ -22,6 +22,8 @@ export class UsersService {
 
     const currentUser = await this.usersRepository.getById(id);
 
+    //Юзер из бд + сумма всех депозитов на пользователя(из блокчейна брать) + сколько он вернул(из блокчейна)
+
     return { ...currentUser, walletbalance };
   }
 

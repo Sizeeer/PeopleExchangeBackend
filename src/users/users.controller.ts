@@ -25,12 +25,14 @@ import { UsersService } from 'src/users/users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @HttpCode(HTTP_STATUS_CODES.OK)
   @Get('talent')
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getTalentPersons(@Query() queryParams: any) {
     return this.usersService.getTalentPersons(Number(queryParams?.page) || 1);
   }
 
+  @HttpCode(HTTP_STATUS_CODES.OK)
   @Get('me')
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getMe(@Req() request) {
@@ -48,6 +50,7 @@ export class UsersController {
     return this.usersService.getById(id);
   }
 
+  @HttpCode(HTTP_STATUS_CODES.OK)
   @Put(':id')
   @UseGuards(RoleGuard(ROLES.TalentPerson, ROLES.Investor))
   update(
@@ -57,12 +60,14 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  @HttpCode(HTTP_STATUS_CODES.OK)
   @UseGuards(RoleGuard(ROLES.Admin))
   @Post('ban/:id')
   ban(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.ban(id);
   }
 
+  @HttpCode(HTTP_STATUS_CODES.OK)
   @UseGuards(RoleGuard(ROLES.Admin))
   @Delete(':id')
   deleteUserAccount(@Param('id', ParseIntPipe) id: number) {

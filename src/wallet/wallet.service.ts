@@ -11,7 +11,6 @@ import * as ABI from './contracts/wallet.json';
 import { InvestInBodyDto } from 'src/wallet/dto/investInBody.dto';
 import { ReturnInvestementsBodyDto } from 'src/wallet/dto/returnInvestementsBody.dto';
 import { UsersRepository } from 'src/users/users.repository';
-import { TransactionsRepository } from 'src/transactions/transactions.repository';
 
 @Injectable()
 export class WalletService {
@@ -25,7 +24,6 @@ export class WalletService {
     @InjectSignerProvider()
     private readonly ethersSigner: EthersSigner,
     private readonly usersRepository: UsersRepository,
-    private readonly transactionsRepository: TransactionsRepository,
   ) {
     this.contract = this.ethersContract.create(
       '0x75a89C3c46dCF70a1B3138487d870f22DEDaD9f2',
