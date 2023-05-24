@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -28,6 +29,12 @@ export class UsersController {
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getTalentPersons(@Query() queryParams: any) {
     return this.usersService.getTalentPersons(Number(queryParams?.page) || 1);
+  }
+
+  @Get('me')
+  @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
+  getMe(@Req() request) {
+    return request.user;
   }
 
   @ApiResponse({
