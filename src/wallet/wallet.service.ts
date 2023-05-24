@@ -37,6 +37,14 @@ export class WalletService {
     return this.ethersSigner.createRandomWallet();
   }
 
+  async recreateWallet(userId: number) {
+    const newWallet = this.ethersSigner.createRandomWallet();
+
+    await this.usersRepository.update(userId, {
+      walletaddress: newWallet.address,
+    });
+  }
+
   async getBalance(userId: number) {
     const currentUser = await this.usersRepository.getById(userId);
 

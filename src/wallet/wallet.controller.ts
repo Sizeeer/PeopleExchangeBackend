@@ -19,6 +19,11 @@ export class WalletController {
     return etherBalance;
   }
 
+  @Post('recreate')
+  async recreateWallet(@Query('userId') userId: number) {
+    return this.walletService.recreateWallet(userId);
+  }
+
   @Post('invest-in')
   @UseGuards(RoleGuard(ROLES.Investor))
   async investIn(@Body() investInBody: InvestInBodyDto) {
