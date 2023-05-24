@@ -15,7 +15,4 @@ export class CreateUserDto {
   password: string;
   @IsEnum(ROLES)
   roleid: ROLES;
-  @IsString()
-  @IsNotEmpty()
-  walletaddress: string;
 }

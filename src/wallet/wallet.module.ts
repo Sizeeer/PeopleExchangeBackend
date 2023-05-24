@@ -4,6 +4,7 @@ import { WalletService } from './wallet.service';
 import { EthersModule, GOERLI_NETWORK } from 'nestjs-ethers';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
+import { WalletRepository } from 'src/wallet/wallet.repository';
 
 @Global()
 @Module({
@@ -25,7 +26,7 @@ import { UsersModule } from 'src/users/users.module';
     UsersModule,
   ],
   controllers: [WalletController],
-  providers: [WalletService],
+  providers: [WalletService, WalletRepository],
   exports: [WalletService],
 })
 export class WalletModule {}

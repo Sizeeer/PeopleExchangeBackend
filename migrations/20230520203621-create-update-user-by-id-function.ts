@@ -5,8 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     id integer,
     email text,
     firstname text,
-    lastname text,
-    walletaddress text
+    lastname text
 )
 RETURNS void
 LANGUAGE plpgsql
@@ -16,8 +15,7 @@ BEGIN
     SET 
         email = COALESCE($2, users.email),
         firstname = COALESCE($3, users.firstname),
-        lastname = COALESCE($4, users.lastname),
-        walletaddress = COALESCE($5, users.walletaddress)
+        lastname = COALESCE($4, users.lastname)
     WHERE users.id = $1;
 END;
 $function$;

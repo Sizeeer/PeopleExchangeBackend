@@ -59,7 +59,7 @@ export class UsersRepository {
   async getByEmail(
     email: string,
     { plain }: GetByEmailOptions = { plain: true },
-  ) {
+  ): Promise<UserModel> {
     const databaseResponse = await this.databaseService.runQuery(
       `SELECT * from getbyemail($1)`,
       [email],
@@ -80,14 +80,13 @@ export class UsersRepository {
   async create(userData: CreateUserDto) {
     try {
       await this.databaseService.runQuery(
-        `SELECT * FROM register($1, $2, $3, $4, $5, $6);`,
+        `SELECT * FROM register($1, $2, $3, $4, $5);`,
         [
           userData.firstname,
           userData.lastname,
           userData.email,
           userData.password,
           userData.roleid,
-          userData.walletaddress,
         ],
       );
     } catch (error) {

@@ -18,13 +18,10 @@ export class AuthService {
 
   public async register(registrationData: RegisterDto) {
     try {
-      const newWallet = await this.walletService.create();
-
       const hashedPassword = await bcrypt.hash(registrationData.password, 10);
 
       await this.usersService.create({
         ...registrationData,
-        walletaddress: newWallet.address,
         password: hashedPassword,
       });
 
@@ -32,10 +29,13 @@ export class AuthService {
         registrationData.email,
       );
 
+      await this.walletService.create(registeredUser.id);
+
       const jwt = this.getJwtToken(registeredUser.id);
 
       return { jwt, user: registeredUser };
     } catch (error: unknown) {
+      console.error(error);
       throw new HttpException(
         'Регистрация завершилась неудачей:(',
         HttpStatus.INTERNAL_SERVER_ERROR,

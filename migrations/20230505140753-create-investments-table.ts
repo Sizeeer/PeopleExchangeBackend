@@ -4,10 +4,10 @@ export async function up(knex: Knex): Promise<void> {
   return knex.raw(`
     CREATE TABLE Investments (
         id SERIAL PRIMARY KEY,
-        investorId INTEGER NOT NULL REFERENCES Users(id),
-        talentPersonId INTEGER NOT NULL REFERENCES Users(id),
+        investor_id INTEGER NOT NULL REFERENCES Users(id),
+        talent_person_id INTEGER NOT NULL REFERENCES Users(id),
         amount INTEGER NOT NULL,
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
   `);
 }

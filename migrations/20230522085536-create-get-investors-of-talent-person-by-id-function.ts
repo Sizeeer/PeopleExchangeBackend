@@ -4,12 +4,12 @@ export async function up(knex: Knex): Promise<void> {
   return knex.raw(`
   CREATE TYPE InvestorInfo AS (
    id INTEGER,
-   firstName VARCHAR(255),
-   lastName VARCHAR(255),
+   first_name VARCHAR(255),
+   last_name VARCHAR(255),
    email VARCHAR(255),
    password VARCHAR(255),
-   roleId INTEGER,
-   walletAddress VARCHAR(255),
+   role_id INTEGER,
+   wallet_address VARCHAR(255),
    invested_amount INTEGER
 );
 
@@ -18,16 +18,17 @@ RETURNS SETOF InvestorInfo
 LANGUAGE sql
 AS $function$
 SELECT u.id, 
-      u.firstName,
-      u.lastName,
+      u.first_name,
+      u.last_name,
       u.email,
       u.password,
-      u.roleId,
-      u.walletAddress,
+      u.role_id,
+      wl.wallet_address AS wallet_address,
       i.amount AS invested_amount
 FROM Users u
-INNER JOIN Investments i ON u.id = i.investorId
-WHERE i.talentpersonId = talentperson_id;
+INNER JOIN Investments i ON u.id = i.investor_id
+INNER JOIN Wallets wl ON wl.user_id = u.id
+WHERE i.talent_person_id = talentperson_id;
 $function$;
         `);
 }
