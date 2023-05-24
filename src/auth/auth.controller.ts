@@ -19,9 +19,9 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
-    const jwt = await this.authService.register(registrationData);
+    const payload = await this.authService.register(registrationData);
 
-    return { jwt };
+    return payload;
   }
 
   @HttpCode(200)

@@ -41,7 +41,7 @@ export class AuthService {
 
       const jwt = this.getJwtToken(registeredUser.id);
 
-      return jwt;
+      return { jwt, user: registeredUser };
     } catch (error: unknown) {
       throw new HttpException(
         'Регистрация завершилась неудачей:(',
