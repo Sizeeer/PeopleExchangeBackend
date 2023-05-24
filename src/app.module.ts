@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { WalletModule } from './wallet/wallet.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import DatabaseModule from 'src/database/database.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import DatabaseModule from 'src/database/database.module';
     AuthModule,
     TransactionsModule,
     WalletModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [

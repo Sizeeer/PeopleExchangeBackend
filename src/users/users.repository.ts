@@ -48,7 +48,10 @@ export class UsersRepository {
     return new UserModel(entity);
   }
 
-  async getByEmail(email: string, { plain = true }: GetByEmailOptions) {
+  async getByEmail(
+    email: string,
+    { plain }: GetByEmailOptions = { plain: true },
+  ) {
     const databaseResponse = await this.databaseService.runQuery(
       `SELECT * from getbyemail($1)`,
       [email],

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { EtherscanProvider, formatEther } from 'ethers';
 import {
   EthersContract,
@@ -24,9 +24,7 @@ export class WalletService {
     private readonly ethersProvider: EtherscanProvider,
     @InjectSignerProvider()
     private readonly ethersSigner: EthersSigner,
-    @Inject(UsersRepository)
     private readonly usersRepository: UsersRepository,
-    @Inject(TransactionsRepository)
     private readonly transactionsRepository: TransactionsRepository,
   ) {
     this.contract = this.ethersContract.create(
@@ -36,7 +34,7 @@ export class WalletService {
   }
 
   async create() {
-    this.ethersSigner.createRandomWallet();
+    return this.ethersSigner.createRandomWallet();
   }
 
   async getBalance(userId: number) {
@@ -55,9 +53,9 @@ export class WalletService {
   ) {
     const { walletaddress } = await this.usersRepository.getById(userId);
     console.log('walletaddress', walletaddress);
-    const inverstorsOfTalentPerson =
-      await this.transactionsRepository.getInvestorsByTalentPersonId(userId);
-    console.log('inverstorsOfTalentPerson', inverstorsOfTalentPerson);
+    // const inverstorsOfTalentPerson =
+    // await this.transactionsRepository.getInvestorsByTalentPersonId(userId);
+    // console.log('inverstorsOfTalentPerson', inverstorsOfTalentPerson);
     const { amount } = returnInvestementsDto;
   }
 

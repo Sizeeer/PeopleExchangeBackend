@@ -11,24 +11,42 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserAlreadyExistsException } from 'src/users/exceptions/userAlreadyExists.exception';
 import { TokenPayload } from 'src/auth/interfaces/tokenPayload.interface';
+import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
+    private readonly walletService: WalletService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
   public async register(registrationData: RegisterDto) {
-    const hashedPassword = await bcrypt.hash(registrationData.password, 10);
-
     try {
-      return await this.usersService.create({
+      const newWallet = await this.walletService.create();
+
+      const hashedPassword = await bcrypt.hash(registrationData.password, 10);
+      console.log({
         ...registrationData,
+        walletaddress: newWallet.address,
         password: hashedPassword,
       });
+      await this.usersService.create({
+        ...registrationData,
+        walletaddress: newWallet.address,
+        password: hashedPassword,
+      });
+
+      const registeredUser = await this.usersService.getByEmail(
+        registrationData.email,
+      );
+
+      const jwt = this.getJwtToken(registeredUser.id);
+
+      return jwt;
     } catch (error: unknown) {
+      console.log('error', error);
       if (error instanceof UserAlreadyExistsException) {
         throw new BadRequestException('User with that email already exists');
       }

@@ -15,7 +15,4 @@ export class RegisterDto {
   password: string;
   @IsEnum(ROLES)
   roleid: ROLES;
-  @IsString()
-  @IsNotEmpty()
-  walletaddress: string;
 }

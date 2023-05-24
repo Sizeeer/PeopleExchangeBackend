@@ -1,4 +1,3 @@
-import { Optional } from '@nestjs/common';
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ROLES } from 'src/constants/roles';
 

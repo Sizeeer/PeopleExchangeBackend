@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { WalletController } from './wallet.controller';
 import { WalletService } from './wallet.service';
 import {
@@ -10,7 +10,10 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersRepository } from 'src/users/users.repository';
 import { TransactionsRepository } from 'src/transactions/transactions.repository';
+import { TransactionsModule } from 'src/transactions/transactions.module';
+import { UsersModule } from 'src/users/users.module';
 
+@Global()
 @Module({
   imports: [
     EthersModule.forRootAsync({
@@ -27,9 +30,11 @@ import { TransactionsRepository } from 'src/transactions/transactions.repository
         };
       },
     }),
+    UsersModule,
+    TransactionsModule,
   ],
   controllers: [WalletController],
-  providers: [WalletService, UsersRepository, TransactionsRepository],
+  providers: [WalletService],
   exports: [WalletService],
 })
 export class WalletModule {}

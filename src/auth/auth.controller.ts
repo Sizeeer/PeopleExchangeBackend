@@ -18,8 +18,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  register(@Body() registrationData: RegisterDto) {
-    return this.authService.register(registrationData);
+  async register(@Body() registrationData: RegisterDto) {
+    const jwt = await this.authService.register(registrationData);
+
+    return { jwt };
   }
 
   @HttpCode(200)
