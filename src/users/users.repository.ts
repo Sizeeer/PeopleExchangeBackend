@@ -114,6 +114,7 @@ export class UsersRepository {
         ],
       );
     } catch (error) {
+      console.log('error', error);
       if (
         isDatabaseError(error) &&
         error.code === PostgresErrorCode.UniqueViolation

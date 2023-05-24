@@ -49,7 +49,7 @@ export class UsersController {
   }
 
   @Put(':id')
-  @UseGuards(RoleGuard(ROLES.Investor))
+  @UseGuards(RoleGuard(ROLES.TalentPerson, ROLES.Investor))
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,

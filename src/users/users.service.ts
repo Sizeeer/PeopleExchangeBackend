@@ -38,6 +38,8 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    console.log('id', id);
+    console.log('updateUserDto', updateUserDto);
     return this.usersRepository.update(id, updateUserDto);
   }
 
