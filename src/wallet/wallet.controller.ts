@@ -30,12 +30,6 @@ export class WalletController {
     return this.walletService.investIn(investInBody);
   }
 
-  @Post('withdraw')
-  @UseGuards(RoleGuard(ROLES.TalentPerson))
-  async withdraw() {
-    return 'Ok';
-  }
-
   @UseGuards(RoleGuard(ROLES.TalentPerson))
   @Post('return')
   returnInvestements(

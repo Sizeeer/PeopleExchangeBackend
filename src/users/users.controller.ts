@@ -45,8 +45,8 @@ export class UsersController {
   })
   @HttpCode(HTTP_STATUS_CODES.OK)
   @Get(':id')
-  @UseGuards(RoleGuard(ROLES.Admin))
-  getAll(@Param('id', ParseIntPipe) id: number) {
+  @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
+  getById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getById(id);
   }
 
@@ -68,7 +68,7 @@ export class UsersController {
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)
-  @UseGuards(RoleGuard(ROLES.Admin))
+  @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   @Delete(':id')
   deleteUserAccount(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.deleteUserAccount(id);
