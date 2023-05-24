@@ -36,8 +36,6 @@ export class UsersRepository {
       ],
     );
 
-    console.log('databaseResponse.rows', databaseResponse.rows);
-
     return plainToInstance(UserModel, databaseResponse.rows);
   }
 

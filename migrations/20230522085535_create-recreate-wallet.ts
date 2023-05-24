@@ -3,16 +3,17 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.raw(`CREATE OR REPLACE FUNCTION public.recreate_wallet(
         id integer,
-        walletaddress text
+        walletaddress text,
+        privatekey text
     )
     RETURNS void
     LANGUAGE plpgsql
     AS $function$
     BEGIN
-        UPDATE Wallets
-        SET 
-            wallet_address = COALESCE($2, Wallets.wallet_address)
-        WHERE users.id = $1;
+        DELETE FROM Wallets WHERE user_id = $1;
+
+        INSERT INTO Wallets(user_id, wallet_address, private_key)
+        VALUES ($1, $2, $3);
     END;
     $function$;
        ;

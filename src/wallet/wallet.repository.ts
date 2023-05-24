@@ -38,6 +38,17 @@ export class WalletRepository {
     }
   }
 
+  async recreate(walletData: CreateWalletDto) {
+    try {
+      await this.databaseService.runQuery(
+        `SELECT * FROM recreate_wallet($1, $2, $3);`,
+        [walletData.userId, walletData.walletAddress, walletData.privateKey],
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       await this.databaseService.runQuery(

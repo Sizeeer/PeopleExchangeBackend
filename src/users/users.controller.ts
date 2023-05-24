@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  Optional,
   Param,
   ParseIntPipe,
   Post,
@@ -67,6 +66,7 @@ export class UsersController {
     return this.usersService.ban(id);
   }
 
+  //TODO: добавить отправку письма пользователю после удаления аккаунта
   @HttpCode(HTTP_STATUS_CODES.OK)
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   @Delete(':id')

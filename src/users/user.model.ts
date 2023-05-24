@@ -3,29 +3,23 @@ import { ROLES } from 'src/constants/roles';
 
 export type UserModelData = {
   id: number;
-  firstname: string;
-  lastname: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
-  roleid: ROLES;
-  walletaddress: string;
+  role_id: ROLES;
 };
 
 export class UserModel {
   id: number;
-  firstname: string;
-  lastname: string;
+  first_name: string;
+  last_name: string;
   email: string;
   @Exclude()
   password: string;
-  roleid: ROLES;
-  walletaddress: string;
+  role_id: ROLES;
 
   constructor(data: UserModelData) {
     Object.assign(this, data);
   }
-}
-
-export class InvestorDTOModel extends UserModel {
-  invested_amout: number;
 }

@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  EtherscanProvider,
-  ethers,
-  formatEther,
-  hexlify,
-  parseEther,
-} from 'ethers';
+import { formatEther, hexlify, parseEther } from 'ethers';
 import {
   EthersContract,
   EthersSigner,
@@ -16,8 +10,6 @@ import {
 } from 'nestjs-ethers';
 import * as ABI from './contracts/wallet.json';
 import { InvestInBodyDto } from 'src/wallet/dto/investInBody.dto';
-import { ReturnInvestementsBodyDto } from 'src/wallet/dto/returnInvestementsBody.dto';
-import { UsersRepository } from 'src/users/users.repository';
 import { WalletRepository } from 'src/wallet/wallet.repository';
 import { Wallet } from '@ethersproject/wallet';
 
@@ -33,7 +25,6 @@ export class WalletService {
     private readonly ethersProvider: MoralisProvider,
     @InjectSignerProvider()
     private readonly ethersSigner: EthersSigner,
-    private readonly usersRepository: UsersRepository,
     private readonly walletRepository: WalletRepository,
   ) {
     this.mainWallet = this.ethersSigner.createWallet(
@@ -41,7 +32,7 @@ export class WalletService {
     );
 
     this.contract = this.ethersContract.create(
-      '0x792E7FC2454d895c4b989fe38E9dcaCA6829b027',
+      '0x534Fa5609f7970936C267227F1BECec37e467c82',
       ABI,
       this.mainWallet,
     );
@@ -50,15 +41,11 @@ export class WalletService {
   async create(userId: number) {
     const newWallet = this.ethersSigner.createRandomWallet();
 
-    const tx = await this.ethersSigner
-      .createWallet(
-        '66afed23fd6f0a182885ccdebc40ce6eac20ea690d59eb1f4b05f76f27084785',
-      )
-      .sendTransaction({
-        to: newWallet.address,
-        value: parseEther('0.0001'),
-        gasLimit: hexlify('0x100000'),
-      });
+    const tx = await this.mainWallet.sendTransaction({
+      to: newWallet.address,
+      value: parseEther('0.0002'),
+      gasLimit: hexlify('0x100000'),
+    });
 
     await tx.wait();
 
@@ -72,39 +59,85 @@ export class WalletService {
   async deposit(userId: number) {
     const currentUserWalletData = await this.walletRepository.getWallet(userId);
 
-    await this.contract
-      .connect(
-        this.ethersSigner.createWallet(currentUserWalletData.private_key),
-      )
-      .estimateGas.deposit();
+    const gasPrice = await this.ethersProvider.getGasPrice();
+
+    const tx = await this.contract.deposit(
+      currentUserWalletData.wallet_address,
+      { gasPrice },
+    );
+
+    await tx.wait();
   }
 
   async recreateWallet(userId: number) {
+    //TODO: надо сделать на фронте предупреждение о потере всех средств
     const newWallet = this.ethersSigner.createRandomWallet();
 
-    await this.usersRepository.update(userId, {
-      walletaddress: newWallet.address,
+    await this.walletRepository.recreate({
+      userId,
+      walletAddress: newWallet.address,
+      privateKey: newWallet.privateKey,
     });
   }
 
   async getBalance(userId: number) {
-    const currentUser = await this.usersRepository.getById(userId);
+    const wallet = await this.walletRepository.getWallet(userId);
 
-    const balanceOfUser = await this.contract.balanceOf(
-      currentUser.walletaddress,
-    );
+    const balanceOfUser = await this.contract.balanceOf(wallet.wallet_address);
 
     return formatEther(balanceOfUser.toString());
   }
 
-  async returnInvestements(
-    userId: number,
-    returnInvestementsDto: ReturnInvestementsBodyDto,
-  ) {
-    const { walletaddress } = await this.usersRepository.getById(userId);
+  async investIn(investorId: number, investInBody: InvestInBodyDto) {
+    const investorWallet = await this.walletRepository.getWallet(investorId);
+    const talentPersonWallet = await this.walletRepository.getWallet(
+      investInBody.userId,
+    );
 
-    const { amount } = returnInvestementsDto;
+    const gasPrice = await this.ethersProvider.getGasPrice();
+
+    const tx = await this.contract.invest(
+      investorWallet.wallet_address,
+      talentPersonWallet.wallet_address,
+      parseEther(`${investInBody.amount}`),
+      { gasPrice },
+    );
+
+    await tx.wait();
   }
 
-  async investIn(investInBody: InvestInBodyDto) {}
+  async returnInvestements(userId: number) {
+    const talentPersonWallet = await this.walletRepository.getWallet(userId);
+
+    const gasPrice = await this.ethersProvider.getGasPrice();
+
+    const tx = await this.contract.returnInvestments(
+      talentPersonWallet.wallet_address,
+      { gasPrice },
+    );
+
+    await tx.wait();
+  }
+
+  async calculateTotalInvestments(userId: number) {
+    const talentPersonWallet = await this.walletRepository.getWallet(userId);
+
+    const totalInvestements: bigint =
+      await this.contract.calculateTotalInvestments(
+        talentPersonWallet.wallet_address,
+      );
+
+    return formatEther(totalInvestements.toString());
+  }
+
+  async calculateTotalReturnedInvestments(userId: number) {
+    const talentPersonWallet = await this.walletRepository.getWallet(userId);
+
+    const totalReturnedInvestments: bigint =
+      await this.contract.calculateTotalInvestments(
+        talentPersonWallet.wallet_address,
+      );
+
+    return formatEther(totalReturnedInvestments.toString());
+  }
 }

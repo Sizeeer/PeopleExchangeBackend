@@ -1,9 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { WalletController } from './wallet.controller';
 import { WalletService } from './wallet.service';
-import { EthersModule, GOERLI_NETWORK } from 'nestjs-ethers';
+import { EthersModule, SEPOLIA_NETWORK } from 'nestjs-ethers';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from 'src/users/users.module';
 import { WalletRepository } from 'src/wallet/wallet.repository';
 
 @Global()
@@ -14,7 +13,7 @@ import { WalletRepository } from 'src/wallet/wallet.repository';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         return {
-          network: GOERLI_NETWORK,
+          network: SEPOLIA_NETWORK,
           infura: {
             projectId: config.get('INFURA_API_KEY'),
             projectSecret: config.get('INFURA_API_SECRET'),
@@ -23,7 +22,6 @@ import { WalletRepository } from 'src/wallet/wallet.repository';
         };
       },
     }),
-    UsersModule,
   ],
   controllers: [WalletController],
   providers: [WalletService, WalletRepository],

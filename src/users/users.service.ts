@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { ROLES } from 'src/constants/roles';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
 import { GetByEmailOptions } from 'src/users/types';
 import { UsersRepository } from 'src/users/users.repository';
+import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly walletService: WalletService,
+  ) {}
 
   async getAll() {
     return this.usersRepository.getAll();
@@ -19,12 +24,27 @@ export class UsersService {
   async getById(id: number) {
     const currentUser = await this.usersRepository.getById(id);
 
-    //Юзер из бд + сумма всех депозитов на пользователя(из блокчейна брать) + сколько он вернул(из блокчейна)
+    let talentUserWalletInformation = {};
+
+    if (currentUser.role_id === ROLES.TalentPerson) {
+      const allInvestementsAmount =
+        await this.walletService.calculateTotalInvestments(currentUser.id);
+
+      const returnInvestementsAmount =
+        await this.walletService.calculateTotalReturnedInvestments(
+          currentUser.id,
+        );
+
+      talentUserWalletInformation = {
+        allInvestementsAmount,
+        returnInvestementsAmount,
+      };
+    }
 
     return {
       ...currentUser,
-      allInvestementsAmount: 1000,
-      returnInvestementsAmount: 100,
+      ...(currentUser.role_id === ROLES.TalentPerson &&
+        talentUserWalletInformation),
     };
   }
 
