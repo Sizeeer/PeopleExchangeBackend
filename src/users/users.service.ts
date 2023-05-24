@@ -17,14 +17,15 @@ export class UsersService {
   }
 
   async getById(id: number) {
-    //Получение баланса кошелька с бека кошелька
-    const walletbalance = 1000;
-
     const currentUser = await this.usersRepository.getById(id);
 
     //Юзер из бд + сумма всех депозитов на пользователя(из блокчейна брать) + сколько он вернул(из блокчейна)
 
-    return { ...currentUser, walletbalance };
+    return {
+      ...currentUser,
+      allInvestementsAmount: 1000,
+      returnInvestementsAmount: 100,
+    };
   }
 
   async getByEmail(email: string, options?: GetByEmailOptions) {
