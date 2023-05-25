@@ -9,6 +9,4 @@ export class UpdateUserDto {
   firstname?: string;
   @Optional()
   lastname?: string;
-  @Optional()
-  walletaddress?: string;
 }

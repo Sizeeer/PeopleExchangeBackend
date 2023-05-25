@@ -49,26 +49,12 @@ export class WalletRepository {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async deleteWallet(userId: number) {
     try {
-      await this.databaseService.runQuery(
-        `SELECT updateuserbyid($1, $2, $3, $4, $5)`,
-        [
-          id,
-          updateUserDto?.email,
-          updateUserDto?.firstname,
-          updateUserDto?.lastname,
-          updateUserDto?.walletaddress,
-        ],
-      );
+      await this.databaseService.runQuery(`SELECT * FROM delete_wallet($1);`, [
+        userId,
+      ]);
     } catch (error) {
-      console.log('error', error);
-      if (
-        isDatabaseError(error) &&
-        error.code === PostgresErrorCode.UniqueViolation
-      ) {
-        throw new UserAlreadyExistsException(updateUserDto.email);
-      }
       throw error;
     }
   }

@@ -70,8 +70,15 @@ export class WalletService {
   }
 
   async recreateWallet(userId: number) {
-    //TODO: надо сделать на фронте предупреждение о потере всех средств
     const newWallet = this.ethersSigner.createRandomWallet();
+
+    const tx = await this.mainWallet.sendTransaction({
+      to: newWallet.address,
+      value: parseEther('0.0002'),
+      gasLimit: hexlify('0x100000'),
+    });
+
+    await tx.wait();
 
     await this.walletRepository.recreate({
       userId,
@@ -89,6 +96,7 @@ export class WalletService {
   }
 
   async investIn(investorId: number, investInBody: InvestInBodyDto) {
+    console.log('investorId, investInBody', investorId, investInBody);
     const investorWallet = await this.walletRepository.getWallet(investorId);
     const talentPersonWallet = await this.walletRepository.getWallet(
       investInBody.userId,

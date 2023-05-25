@@ -14,8 +14,8 @@ BEGIN
     UPDATE users
     SET 
         email = COALESCE($2, users.email),
-        firstname = COALESCE($3, users.firstname),
-        lastname = COALESCE($4, users.lastname)
+        first_name = COALESCE($3, users.first_name),
+        last_name = COALESCE($4, users.last_name)
     WHERE users.id = $1;
 END;
 $function$;

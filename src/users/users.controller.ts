@@ -28,14 +28,24 @@ export class UsersController {
   @Get('talent')
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getTalentPersons(@Query() queryParams: any) {
-    return this.usersService.getTalentPersons(Number(queryParams?.page) || 1);
+    try {
+      return this.usersService.getTalentPersons(Number(queryParams?.page) || 1);
+    } catch (err) {
+      console.log('err', err);
+      throw new Error(err);
+    }
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)
   @Get('me')
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getMe(@Req() request) {
-    return request.user;
+    try {
+      return this.usersService.getUserWithWallet(request.user);
+    } catch (err) {
+      console.log('err', err);
+      throw new Error(err);
+    }
   }
 
   @ApiResponse({
@@ -66,7 +76,6 @@ export class UsersController {
     return this.usersService.ban(id);
   }
 
-  //TODO: добавить отправку письма пользователю после удаления аккаунта
   @HttpCode(HTTP_STATUS_CODES.OK)
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   @Delete(':id')

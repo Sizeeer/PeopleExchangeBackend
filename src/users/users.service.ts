@@ -3,7 +3,9 @@ import { ROLES } from 'src/constants/roles';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
 import { GetByEmailOptions } from 'src/users/types';
+import { UserModel, UserModelData } from 'src/users/user.model';
 import { UsersRepository } from 'src/users/users.repository';
+import { WalletRepository } from 'src/wallet/wallet.repository';
 import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()
@@ -11,6 +13,7 @@ export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly walletService: WalletService,
+    private readonly walletRepository: WalletRepository,
   ) {}
 
   async getAll() {
@@ -21,8 +24,22 @@ export class UsersService {
     return this.usersRepository.getTalentPersons(page);
   }
 
+  async getUserWithWallet(user: UserModelData) {
+    const currentWallet = await this.walletRepository.getWallet(user.id);
+
+    const walletBalance = await this.walletService.getBalance(user.id);
+
+    return {
+      ...user,
+      wallet_address: currentWallet.wallet_address,
+      wallet_balance: walletBalance,
+    };
+  }
+
   async getById(id: number) {
     const currentUser = await this.usersRepository.getById(id);
+
+    const userWallet = await this.walletRepository.getWallet(id);
 
     let talentUserWalletInformation = {};
 
@@ -42,9 +59,11 @@ export class UsersService {
     }
 
     return {
-      ...currentUser,
-      ...(currentUser.role_id === ROLES.TalentPerson &&
-        talentUserWalletInformation),
+      user: { ...currentUser, wallet_address: userWallet.wallet_address },
+      info: {
+        ...(currentUser.role_id === ROLES.TalentPerson &&
+          talentUserWalletInformation),
+      },
     };
   }
 
@@ -61,8 +80,6 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    console.log('id', id);
-    console.log('updateUserDto', updateUserDto);
     return this.usersRepository.update(id, updateUserDto);
   }
 
@@ -71,6 +88,8 @@ export class UsersService {
   }
 
   async deleteUserAccount(id: number) {
-    return this.usersRepository.deleteUserAccount(id);
+    await this.walletRepository.deleteWallet(id);
+
+    await this.usersRepository.deleteUserAccount(id);
   }
 }

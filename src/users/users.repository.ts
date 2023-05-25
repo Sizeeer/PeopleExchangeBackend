@@ -27,7 +27,7 @@ export class UsersRepository {
   async getTalentPersons(page: number) {
     const databaseResponse = await this.databaseService.runQuery(
       `
-      SELECT * FROM Users WHERE is_banned = false and roleid = $1 LIMIT $2 OFFSET $3
+      SELECT * FROM Users WHERE is_banned = false and role_id = $1 LIMIT $2 OFFSET $3
     `,
       [
         ROLES.TalentPerson,
@@ -51,7 +51,7 @@ export class UsersRepository {
       throw new NotFoundException();
     }
 
-    return new UserModel(entity);
+    return plainToInstance(UserModel, entity);
   }
 
   async getByEmail(
@@ -101,13 +101,12 @@ export class UsersRepository {
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       await this.databaseService.runQuery(
-        `SELECT updateuserbyid($1, $2, $3, $4, $5)`,
+        `SELECT updateuserbyid($1, $2, $3, $4)`,
         [
           id,
           updateUserDto?.email,
           updateUserDto?.firstname,
           updateUserDto?.lastname,
-          updateUserDto?.walletaddress,
         ],
       );
     } catch (error) {
