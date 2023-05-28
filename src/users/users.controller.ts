@@ -12,7 +12,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { HTTP_STATUS_CODES } from 'src/constants/httpStatusCodes';
 import { ROLES } from 'src/constants/roles';
@@ -23,6 +23,18 @@ import { UsersService } from 'src/users/users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @HttpCode(HTTP_STATUS_CODES.OK)
+  @Get('me')
+  @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
+  getMe(@Req() request) {
+    try {
+      return this.usersService.getUserWithWallet(request.user);
+    } catch (err) {
+      console.log('err', err);
+      throw new Error(err);
+    }
+  }
 
   @HttpCode(HTTP_STATUS_CODES.OK)
   @Get('talent')
@@ -37,26 +49,24 @@ export class UsersController {
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)
-  @Get('me')
-  @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
-  getMe(@Req() request) {
-    try {
-      return this.usersService.getUserWithWallet(request.user);
-    } catch (err) {
-      console.log('err', err);
-      throw new Error(err);
-    }
+  @UseGuards(RoleGuard(ROLES.Admin))
+  @Post('ban/:id')
+  ban(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.ban(id);
   }
 
-  @ApiResponse({
-    status: HTTP_STATUS_CODES.OK,
-    description: 'Возвращает пользователя по id админу',
-  })
   @HttpCode(HTTP_STATUS_CODES.OK)
   @Get(':id')
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getById(id);
+  }
+
+  @HttpCode(HTTP_STATUS_CODES.OK)
+  @Get('talent/:id')
+  @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
+  getTalentUserById(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getTalentUserById(id);
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)
@@ -67,13 +77,6 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(id, updateUserDto);
-  }
-
-  @HttpCode(HTTP_STATUS_CODES.OK)
-  @UseGuards(RoleGuard(ROLES.Admin))
-  @Post('ban/:id')
-  ban(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.ban(id);
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)

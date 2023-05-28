@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumberString, IsString } from 'class-validator';
 import { ROLES } from 'src/constants/roles';
 
 export class RegisterDto {
@@ -13,6 +13,6 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   password: string;
-  @IsEnum(ROLES)
+  @IsNumberString()
   roleid: ROLES;
 }

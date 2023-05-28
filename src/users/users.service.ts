@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { omit } from 'lodash';
 import { ROLES } from 'src/constants/roles';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
@@ -30,7 +31,7 @@ export class UsersService {
     const walletBalance = await this.walletService.getBalance(user.id);
 
     return {
-      ...user,
+      ...omit(user, 'password'),
       wallet_address: currentWallet.wallet_address,
       wallet_balance: walletBalance,
     };
@@ -39,31 +40,56 @@ export class UsersService {
   async getById(id: number) {
     const currentUser = await this.usersRepository.getById(id);
 
-    const userWallet = await this.walletRepository.getWallet(id);
+    if (currentUser.role_id === ROLES.Admin) {
+      return { user: currentUser, info: {} };
+    } else {
+      const userWallet = await this.walletRepository.getWallet(id);
 
-    let talentUserWalletInformation = {};
+      let talentUserWalletInformation = {};
 
-    if (currentUser.role_id === ROLES.TalentPerson) {
-      const allInvestementsAmount =
-        await this.walletService.calculateTotalInvestments(currentUser.id);
+      if (currentUser.role_id === ROLES.TalentPerson) {
+        const allInvestementsAmount =
+          await this.walletService.calculateTotalInvestments(currentUser.id);
 
-      const returnInvestementsAmount =
-        await this.walletService.calculateTotalReturnedInvestments(
-          currentUser.id,
-        );
+        const returnInvestementsAmount =
+          await this.walletService.calculateTotalReturnedInvestments(
+            currentUser.id,
+          );
 
-      talentUserWalletInformation = {
-        allInvestementsAmount,
-        returnInvestementsAmount,
+        talentUserWalletInformation = {
+          allInvestementsAmount,
+          returnInvestementsAmount,
+        };
+      }
+
+      return {
+        user: { ...currentUser, wallet_address: userWallet.wallet_address },
+        info: {
+          ...(currentUser.role_id === ROLES.TalentPerson &&
+            talentUserWalletInformation),
+        },
       };
     }
+  }
+
+  async getTalentUserById(id: number) {
+    const currentUser = await this.usersRepository.getById(id);
+
+    const userWallet = await this.walletRepository.getWallet(id);
+
+    const allInvestementsAmount =
+      await this.walletService.calculateTotalInvestments(currentUser.id);
+
+    const returnInvestementsAmount =
+      await this.walletService.calculateTotalReturnedInvestments(
+        currentUser.id,
+      );
 
     return {
-      user: { ...currentUser, wallet_address: userWallet.wallet_address },
-      info: {
-        ...(currentUser.role_id === ROLES.TalentPerson &&
-          talentUserWalletInformation),
-      },
+      ...currentUser,
+      wallet_address: userWallet.wallet_address,
+      allInvestementsAmount,
+      returnInvestementsAmount,
     };
   }
 

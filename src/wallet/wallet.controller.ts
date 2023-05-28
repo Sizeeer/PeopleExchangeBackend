@@ -42,8 +42,8 @@ export class WalletController {
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)
-  @Post('invest-in')
   @UseGuards(RoleGuard(ROLES.Investor))
+  @Post('invest')
   async investIn(
     @Body() investInBody: InvestInBodyDto,
     @Req() req: RequestWithUser,

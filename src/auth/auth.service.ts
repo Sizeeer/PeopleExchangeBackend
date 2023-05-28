@@ -33,7 +33,7 @@ export class AuthService {
 
       const jwt = this.getJwtToken(registeredUser.id);
 
-      return { jwt, user: registeredUser };
+      return { jwt };
     } catch (error: unknown) {
       console.error(error);
       throw new HttpException(
