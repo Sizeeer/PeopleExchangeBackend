@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  InternalServerErrorException,
   Param,
   ParseIntPipe,
   Post,
@@ -28,12 +29,15 @@ export class UsersController {
   @Get('me')
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getMe(@Req() request) {
-    try {
-      return this.usersService.getUserWithWallet(request.user);
-    } catch (err) {
-      console.log('err', err);
-      throw new Error(err);
+    const currentUser = request.user;
+
+    if (currentUser.is_banned) {
+      throw new InternalServerErrorException(
+        'Вы заблокированы на платформе)))))))',
+      );
     }
+
+    return this.usersService.getUserWithWallet(request.user);
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)
@@ -60,6 +64,15 @@ export class UsersController {
   @UseGuards(RoleGuard(ROLES.Admin, ROLES.Investor, ROLES.TalentPerson))
   getById(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getById(id);
+  }
+
+  @HttpCode(HTTP_STATUS_CODES.OK)
+  @Get('for-admin/:id')
+  @UseGuards(RoleGuard(ROLES.Admin))
+  async getUserForAdmin(@Param('id', ParseIntPipe) id: number) {
+    const currentUser = await this.usersService.getUserForAdmin(id);
+
+    return currentUser;
   }
 
   @HttpCode(HTTP_STATUS_CODES.OK)

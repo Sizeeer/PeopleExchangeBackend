@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { omit } from 'lodash';
 import { ROLES } from 'src/constants/roles';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
@@ -75,6 +75,24 @@ export class UsersService {
     }
   }
 
+  async getUserForAdmin(id: number) {
+    const currentUser = await this.usersRepository.getById(id);
+
+    if (currentUser.role_id === ROLES.Admin) {
+      throw new InternalServerErrorException(
+        'Админ не может получить профиль админа',
+      );
+    }
+
+    const userWallet = await this.walletRepository.getWallet(id);
+
+    return {
+      ...currentUser,
+      wallet_address: userWallet.wallet_address,
+      wallet_balance: await this.walletService.getBalance(id),
+    };
+  }
+
   async getTalentUserById(id: number) {
     const currentUser = await this.usersRepository.getById(id);
 
@@ -113,10 +131,22 @@ export class UsersService {
   }
 
   async ban(id: number) {
+    const currentUser = await this.usersRepository.getById(id);
+
+    if (currentUser.role_id === ROLES.Admin) {
+      throw new InternalServerErrorException('Нельзя забанить админа');
+    }
+
     return this.usersRepository.ban(id);
   }
 
   async deleteUserAccount(id: number) {
+    const currentUser = await this.usersRepository.getById(id);
+
+    if (currentUser.role_id === ROLES.Admin) {
+      throw new InternalServerErrorException('Нельзя удалить админа');
+    }
+
     await this.walletRepository.deleteWallet(id);
 
     await this.usersRepository.deleteUserAccount(id);
