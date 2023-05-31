@@ -26,14 +26,17 @@ export class UsersService {
   }
 
   async getUserWithWallet(user: UserModelData) {
-    const currentWallet = await this.walletRepository.getWallet(user.id);
-
-    const walletBalance = await this.walletService.getBalance(user.id);
+    let currentWallet;
+    if (user.role_id !== ROLES.Admin) {
+      currentWallet = await this.walletRepository.getWallet(user.id);
+    }
 
     return {
       ...omit(user, 'password'),
-      wallet_address: currentWallet.wallet_address,
-      wallet_balance: walletBalance,
+      ...(currentWallet && {
+        wallet_address: currentWallet.wallet_address,
+        wallet_balance: await this.walletService.getBalance(user.id),
+      }),
     };
   }
 
