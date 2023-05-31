@@ -6,6 +6,7 @@ import { WalletModule } from './wallet/wallet.module';
 import DatabaseModule from 'src/database/database.module';
 import { UsersModule } from 'src/users/users.module';
 import { RoadmapModule } from './roadmap/roadmap.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { RoadmapModule } from './roadmap/roadmap.module';
     WalletModule,
     UsersModule,
     RoadmapModule,
+    MailModule,
   ],
   controllers: [],
   providers: [

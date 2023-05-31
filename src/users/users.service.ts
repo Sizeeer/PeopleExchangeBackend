@@ -1,10 +1,11 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { omit } from 'lodash';
 import { ROLES } from 'src/constants/roles';
+import { MailService } from 'src/mail/mail.service';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { UpdateUserDto } from 'src/users/dto/updateUser.dto';
 import { GetByEmailOptions } from 'src/users/types';
-import { UserModel, UserModelData } from 'src/users/user.model';
+import { UserModelData } from 'src/users/user.model';
 import { UsersRepository } from 'src/users/users.repository';
 import { WalletRepository } from 'src/wallet/wallet.repository';
 import { WalletService } from 'src/wallet/wallet.service';
@@ -15,6 +16,7 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
     private readonly walletService: WalletService,
     private readonly walletRepository: WalletRepository,
+    private readonly mailService: MailService,
   ) {}
 
   async getAll() {
@@ -137,7 +139,9 @@ export class UsersService {
       throw new InternalServerErrorException('Нельзя забанить админа');
     }
 
-    return this.usersRepository.ban(id);
+    await this.usersRepository.ban(id);
+
+    await this.mailService.sendUserBanEmail(currentUser);
   }
 
   async deleteUserAccount(id: number) {

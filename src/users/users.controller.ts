@@ -32,9 +32,7 @@ export class UsersController {
     const currentUser = request.user;
 
     if (currentUser.is_banned) {
-      throw new InternalServerErrorException(
-        'Вы заблокированы на платформе)))))))',
-      );
+      throw new InternalServerErrorException('Вы заблокированы на платформе)');
     }
 
     return this.usersService.getUserWithWallet(request.user);
