@@ -8,7 +8,7 @@ contract Wallet {
     mapping(address => address[]) investors;
 
     function deposit(address user) external {
-        balances[user] += 10000000000000000;
+        balances[user] += 100;
     }
 
     function balanceOf(address user) public view returns (uint256) {
@@ -59,18 +59,18 @@ contract Wallet {
         for (uint256 i = 0; i < investorsCount; i++) {
             address investor = investorsList[i];
             uint256 investorInvestment = investments[talentUser][investor];
-            uint256 investorShare = (investorInvestment *
-                balances[talentUser]) / totalInvestments;
 
-            uint256 investorEarningsPercentage = (investorShare *
-                totalEarnings) / balances[talentUser];
-            uint256 investorEarnings = (investorEarningsPercentage *
+            uint256 investorShare = (investorInvestment * totalEarnings) /
+                totalInvestments;
+            uint256 investorEarnings = (investorShare *
                 totalReturnedInvestments) / totalEarnings;
 
             balances[investor] += investorShare - investorEarnings;
             balances[talentUser] -= investorShare;
 
-            returnedInvestements[talentUser][investor] += investorEarnings;
+            returnedInvestements[talentUser][investor] +=
+                investorShare -
+                investorEarnings;
 
             investorStatistics[talentUser][investor] = InvestorStats({
                 investment: investorInvestment,

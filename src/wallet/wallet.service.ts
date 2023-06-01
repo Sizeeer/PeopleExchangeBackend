@@ -32,7 +32,7 @@ export class WalletService {
     );
 
     this.contract = this.ethersContract.create(
-      '0xd3D0c227d2C38df52589c42288769705D84145dF',
+      '0xe4B0a9851a17fB17271ad4dEfFaA5489e1eBD483',
       ABI,
       this.mainWallet,
     );
@@ -44,7 +44,7 @@ export class WalletService {
     const tx = await this.mainWallet.sendTransaction({
       to: newWallet.address,
       value: parseEther('0.0008'),
-      gasLimit: hexlify('0x100000'),
+      gasLimit: hexlify('0x200000'),
     });
 
     await tx.wait();
@@ -74,8 +74,8 @@ export class WalletService {
 
     const tx = await this.mainWallet.sendTransaction({
       to: newWallet.address,
-      value: parseEther('0.0002'),
-      gasLimit: hexlify('0x100000'),
+      value: parseEther('0.0008'),
+      gasLimit: hexlify('0x200000'),
     });
 
     await tx.wait();
@@ -96,7 +96,6 @@ export class WalletService {
   }
 
   async investIn(investorId: number, investInBody: InvestInBodyDto) {
-    console.log('investorId, investInBody', investorId, investInBody);
     const investorWallet = await this.walletRepository.getWallet(investorId);
     const talentPersonWallet = await this.walletRepository.getWallet(
       investInBody.userId,
@@ -142,7 +141,7 @@ export class WalletService {
     const talentPersonWallet = await this.walletRepository.getWallet(userId);
 
     const totalReturnedInvestments: bigint =
-      await this.contract.calculateTotalInvestments(
+      await this.contract.calculateTotalReturnedInvestments(
         talentPersonWallet.wallet_address,
       );
 

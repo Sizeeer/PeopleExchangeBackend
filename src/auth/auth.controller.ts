@@ -24,9 +24,7 @@ export class AuthController {
   @Post('register')
   async register(@Body() registrationData: RegisterDto, @Res() res: Response) {
     try {
-      const payload = await this.authService.register(registrationData);
-
-      return payload;
+      return res.json(await this.authService.register(registrationData));
     } catch (e) {
       return res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
         message:
@@ -40,7 +38,6 @@ export class AuthController {
   @Post('login')
   async login(@Req() request: RequestWithUser) {
     const { user } = request;
-    console.log('user', user);
 
     const jwt = this.authService.getJwtToken(user.id);
 
