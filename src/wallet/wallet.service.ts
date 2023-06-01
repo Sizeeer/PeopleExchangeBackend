@@ -32,7 +32,7 @@ export class WalletService {
     );
 
     this.contract = this.ethersContract.create(
-      '0x534Fa5609f7970936C267227F1BECec37e467c82',
+      '0xd3D0c227d2C38df52589c42288769705D84145dF',
       ABI,
       this.mainWallet,
     );
@@ -43,7 +43,7 @@ export class WalletService {
 
     const tx = await this.mainWallet.sendTransaction({
       to: newWallet.address,
-      value: parseEther('0.0002'),
+      value: parseEther('0.0008'),
       gasLimit: hexlify('0x100000'),
     });
 

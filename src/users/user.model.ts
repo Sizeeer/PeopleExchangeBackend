@@ -8,6 +8,7 @@ export type UserModelData = {
   email: string;
   password: string;
   role_id: ROLES;
+  is_banned: boolean;
 };
 
 export class UserModel {
@@ -18,6 +19,7 @@ export class UserModel {
   @Exclude()
   password: string;
   role_id: ROLES;
+  is_banned: boolean;
 
   constructor(data: UserModelData) {
     Object.assign(this, data);

@@ -5,15 +5,15 @@ import { UsersModule } from 'src/users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { LocalStrategy } from 'src/auth/strategies/local.strategy';
 import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { WalletModule } from 'src/wallet/wallet.module';
+import { LocalStrategy } from 'src/auth/strategies/local.strategy';
 
 @Module({
   imports: [
+    PassportModule,
     UsersModule,
     WalletModule,
-    PassportModule,
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

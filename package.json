@@ -35,7 +35,6 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "ethers": "^6.3.0",
-    "handlebars": "^4.7.7",
     "knex": "^2.4.2",
     "lodash": "^4.17.21",
     "nestjs-ethers": "^2.0.3",

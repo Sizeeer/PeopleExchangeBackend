@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from 'src/auth/dto/register.dto';
@@ -34,12 +34,8 @@ export class AuthService {
       const jwt = this.getJwtToken(registeredUser.id);
 
       return { jwt };
-    } catch (error: unknown) {
-      console.error(error);
-      throw new HttpException(
-        'Регистрация завершилась неудачей:(',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    } catch (error) {
+      throw new Error(error);
     }
   }
 

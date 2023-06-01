@@ -18,6 +18,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: TokenPayload) {
-    return (await this.userService.getById(payload.userId)).user;
+    const currentUser = (await this.userService.getById(payload.userId)).user;
+
+    if (currentUser.is_banned) {
+      throw new Error('Вы забанены');
+    }
+
+    return currentUser;
   }
 }

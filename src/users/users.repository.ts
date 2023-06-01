@@ -92,7 +92,9 @@ export class UsersRepository {
         isDatabaseError(error) &&
         error.code === PostgresErrorCode.UniqueViolation
       ) {
-        throw new UserAlreadyExistsException(userData.email);
+        throw new Error(
+          `Пользователь с email: ${userData.email}, уже существует`,
+        );
       }
       throw error;
     }
